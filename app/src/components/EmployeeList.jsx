@@ -37,8 +37,7 @@ const EmployeeList = () => {
   const [employees, setEmployees] = useState([]);
   const [error, setError] = useState(null);
   const [isLoading, setIsLoading] = useState(true);
-  const [editingEmployee, setEditingEmployee] = useState(null);
-  const [updatedData, setUpdatedData] = useState({});
+  const [editingEmployeeId, setEditingEmployeeId] = useState(null);
 
   useEffect(() => {
     const fetchData = async () => {
@@ -65,26 +64,19 @@ const EmployeeList = () => {
     }
   };
 
-  const handleEdit = (employee) => {
-    setEditingEmployee(employee);
-    setUpdatedData({
-      firstName: employee.firstName,
-      lastName: employee.lastName,
-      position: employee.position,
-    });
+  const handleEditChange = (id, field, value) => {
+    setEmployees((prevEmployees) =>
+      prevEmployees.map((employee) =>
+        employee._id === id ? { ...employee, [field]: value } : employee
+      )
+    );
   };
 
-  const handleUpdate = async () => {
+  const handleUpdate = async (id) => {
+    const updatedEmployee = employees.find((employee) => employee._id === id);
     try {
-      await updateEmployee({ id: editingEmployee._id, updatedData });
-      setEmployees((prevEmployees) =>
-        prevEmployees.map((employee) =>
-          employee._id === editingEmployee._id
-            ? { ...employee, ...updatedData }
-            : employee
-        )
-      );
-      setEditingEmployee(null);
+      await updateEmployee({ id, updatedData: updatedEmployee });
+      setEditingEmployeeId(null);
     } catch (err) {
       setError("Personel güncellenemedi");
     }
@@ -121,61 +113,74 @@ const EmployeeList = () => {
         <tbody>
           {employees.map((employee) => (
             <tr key={employee._id}>
-              <td>{employee.firstName}</td>
-              <td>{employee.lastName}</td>
-              <td>{employee.position}</td>
               <td>
-                <button onClick={() => handleEdit(employee)}>Düzenle</button>
-                <button onClick={() => handleDelete(employee._id)}>Sil</button>
+                {editingEmployeeId === employee._id ? (
+                  <input
+                    type="text"
+                    value={employee.firstName}
+                    onChange={(e) =>
+                      handleEditChange(
+                        employee._id,
+                        "firstName",
+                        e.target.value
+                      )
+                    }
+                  />
+                ) : (
+                  employee.firstName
+                )}
+              </td>
+              <td>
+                {editingEmployeeId === employee._id ? (
+                  <input
+                    type="text"
+                    value={employee.lastName}
+                    onChange={(e) =>
+                      handleEditChange(employee._id, "lastName", e.target.value)
+                    }
+                  />
+                ) : (
+                  employee.lastName
+                )}
+              </td>
+              <td>
+                {editingEmployeeId === employee._id ? (
+                  <input
+                    type="text"
+                    value={employee.position}
+                    onChange={(e) =>
+                      handleEditChange(employee._id, "position", e.target.value)
+                    }
+                  />
+                ) : (
+                  employee.position
+                )}
+              </td>
+              <td>
+                {editingEmployeeId === employee._id ? (
+                  <>
+                    <button onClick={() => handleUpdate(employee._id)}>
+                      Kaydet
+                    </button>
+                    <button onClick={() => setEditingEmployeeId(null)}>
+                      İptal
+                    </button>
+                  </>
+                ) : (
+                  <>
+                    <button onClick={() => setEditingEmployeeId(employee._id)}>
+                      Düzenle
+                    </button>
+                    <button onClick={() => handleDelete(employee._id)}>
+                      Sil
+                    </button>
+                  </>
+                )}
               </td>
             </tr>
           ))}
         </tbody>
       </table>
-
-      {editingEmployee && (
-        <div className="edit-modal">
-          <h2>Düzenle</h2>
-          <form onSubmit={(e) => e.preventDefault()}>
-            <label>
-              Ad:
-              <input
-                type="text"
-                value={updatedData.firstName}
-                onChange={(e) =>
-                  setUpdatedData({ ...updatedData, firstName: e.target.value })
-                }
-              />
-            </label>
-            <label>
-              Soyad:
-              <input
-                type="text"
-                value={updatedData.lastName}
-                onChange={(e) =>
-                  setUpdatedData({ ...updatedData, lastName: e.target.value })
-                }
-              />
-            </label>
-            <label>
-              Pozisyon:
-              <input
-                type="text"
-                value={updatedData.position}
-                onChange={(e) =>
-                  setUpdatedData({ ...updatedData, position: e.target.value })
-                }
-              />
-            </label>
-            <button type="button" onClick={handleUpdate}>
-              Kaydet
-            </button>
-            <button type="button" onClick={() => setEditingEmployee(null)}>
-              İptal
-            </button>
-          </form>
-        </div>
-      )}
     </div>
   );
 };
