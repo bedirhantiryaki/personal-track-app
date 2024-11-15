@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import "./AddEmployee.css";
 
 const AddEmployee = () => {
   // Form verileri için state tanımlıyoruz

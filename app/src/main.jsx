@@ -10,11 +10,10 @@ ReactDOM.createRoot(document.getElementById("root")).render(
   <Provider store={store}>
     {/* Redux Provider ile Store'u sağlıyoruz */}
     <Router>
-      <App />
-
       <Routes>
-        <Route path="/" element={<AddEmployee />} />{" "}
-        {/* Ana sayfa için AddEmployee component'i */}
+        {/* Ana sayfa ve personel ekleme sayfalarını yönlendirme */}
+        <Route path="/" element={<App />} />
+        <Route path="/addEmployee" element={<AddEmployee />} />
       </Routes>
     </Router>
   </Provider>
