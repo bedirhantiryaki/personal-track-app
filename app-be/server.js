@@ -47,7 +47,28 @@ app.get("/api/employees", async (req, res) => {
   }
 });
 // Örnek Express.js CORS konfigürasyonu
+app.delete("/api/employees/:id", async (req, res) => {
+  try {
+    const { id } = req.params;
+    await Employee.findByIdAndDelete(id);
+    res.status(200).json({ message: "Personel başarıyla silindi" });
+  } catch (err) {
+    res.status(500).json({ error: "Personel silinemedi" });
+  }
+});
 
+// 4. Personel Güncelleme (PUT /api/employees/:id)
+app.put("/api/employees/:id", async (req, res) => {
+  try {
+    const { id } = req.params;
+    const updatedEmployee = await Employee.findByIdAndUpdate(id, req.body, {
+      new: true,
+    });
+    res.status(200).json(updatedEmployee);
+  } catch (err) {
+    res.status(400).json({ error: "Personel güncellenemedi" });
+  }
+});
 // Sunucu başlatma
 app.listen(5000, () => {
   console.log("Server running at http://localhost:5000");

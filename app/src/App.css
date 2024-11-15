@@ -1,0 +1,27 @@
+/* App.css veya her component'e özgü CSS dosyasına eklenebilir */
+body {
+  font-family: "Roboto", sans-serif; /* Roboto varsayılan yazı tipi */
+  color: #333;
+  margin: 0;
+  padding: 0;
+  background-color: #f9f9f9; /* Hafif bir arka plan */
+}
+
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+  font-family: "Poppins", sans-serif; /* Başlıklar için Poppins */
+  color: #222;
+  font-weight: 600;
+}
+
+p,
+label,
+input,
+select,
+button {
+  font-family: "Roboto", sans-serif; /* Diğer metinler için Roboto */
+}
