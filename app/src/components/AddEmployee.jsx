@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import { useMutation } from "@tanstack/react-query";
 import "./AddEmployee.css";
 
 const AddEmployee = () => {
@@ -18,37 +19,45 @@ const AddEmployee = () => {
     });
   };
 
+  // API'ye POST isteği gönderen fonksiyon
+  const addEmployee = async (newEmployee) => {
+    const response = await fetch("http://localhost:5000/addEmployee", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(newEmployee),
+    });
+
+    if (!response.ok) {
+      throw new Error("Personel kaydedilemedi");
+    }
+
+    return response.json();
+  };
+
+  // useMutation ile mutasyon işlemi yapıyoruz
+  const { mutate, isLoading, isError, error, isSuccess } =
+    useMutation(addEmployee);
+
   // Form gönderildiğinde yapılacak işlem
-  const handleSubmit = async (e) => {
+  const handleSubmit = (e) => {
     e.preventDefault(); // Sayfanın yeniden yüklenmesini engelliyoruz
     console.log("Personel Kayıt Verileri:", formData);
 
-    // API'ye POST isteği gönderme
-    try {
-      const response = await fetch("http://localhost:5000/addEmployee", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(formData),
-      });
-
-      if (response.ok) {
-        alert("Personel başarıyla kaydedildi!");
-        setFormData({
-          firstName: "",
-          lastName: "",
-          position: "",
-        });
-      } else {
-        const data = await response.json();
-        alert(data.message || "Bir hata oluştu");
-      }
-    } catch (error) {
-      console.error("API isteği sırasında hata oluştu:", error);
-      alert("Bir hata oluştu");
-    }
+    // Veriyi React Query'nin mutate fonksiyonu ile gönderiyoruz
+    mutate(formData);
   };
+
+  // Başarılı kaydetme mesajı
+  if (isSuccess) {
+    alert("Personel başarıyla kaydedildi!");
+    setFormData({
+      firstName: "",
+      lastName: "",
+      position: "",
+    });
+  }
 
   return (
     <div>
@@ -97,8 +106,12 @@ const AddEmployee = () => {
         </div>
 
         <div>
-          <button type="submit">Kaydet</button>
+          <button type="submit" disabled={isLoading}>
+            {isLoading ? "Kaydediliyor..." : "Kaydet"}
+          </button>
         </div>
+
+        {isError && <div style={{ color: "red" }}>{error.message}</div>}
       </form>
     </div>
   );

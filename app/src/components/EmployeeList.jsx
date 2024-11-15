@@ -1,39 +1,29 @@
-import React, { useState, useEffect } from "react";
+import React from "react";
+import { useQuery } from "@tanstack/react-query";
 import "./EmployeeList.css"; // Stil dosyanız varsa ekleyebilirsiniz
 
+const fetchEmployees = async () => {
+  const response = await fetch("http://localhost:5000/api/employees");
+  if (!response.ok) {
+    throw new Error("Personel verileri alınamadı");
+  }
+  return response.json();
+};
+
 const EmployeeList = () => {
-  // State tanımlıyoruz
-  const [employees, setEmployees] = useState([]);
-  const [loading, setLoading] = useState(true); // Veri yükleniyor durumu
-  const [error, setError] = useState(null); // Hata durumu
+  // React Query'nin useQuery hook'unu kullanıyoruz
+  const {
+    data: employees,
+    error,
+    isLoading,
+  } = useQuery(["employees"], fetchEmployees);
 
-  // Verileri API'den almak için useEffect kullanıyoruz
-  useEffect(() => {
-    // API'den verileri alıyoruz
-    const fetchEmployees = async () => {
-      try {
-        const response = await fetch("http://localhost:5000/api/employees");
-        if (!response.ok) {
-          throw new Error("Personel verileri alınamadı");
-        }
-        const data = await response.json();
-        setEmployees(data); // Alınan veriyi state'e kaydediyoruz
-      } catch (error) {
-        setError(error.message); // Hata oluşursa hatayı state'e kaydediyoruz
-      } finally {
-        setLoading(false); // Yükleme durumu tamamlanıyor
-      }
-    };
-
-    fetchEmployees();
-  }, []); // useEffect sadece component ilk yüklendiğinde çalışacak
-
-  if (loading) {
+  if (isLoading) {
     return <div>Yükleniyor...</div>; // Yükleniyor mesajı
   }
 
   if (error) {
-    return <div>{error}</div>; // Hata mesajı
+    return <div>{error.message}</div>; // Hata mesajı
   }
 
   return (
