@@ -19,16 +19,35 @@ const AddEmployee = () => {
   };
 
   // Form gönderildiğinde yapılacak işlem
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault(); // Sayfanın yeniden yüklenmesini engelliyoruz
     console.log("Personel Kayıt Verileri:", formData);
-    // Burada formu göndermek için API'ye veya başka bir işleme yönlendirebilirsiniz
-    alert("Personel başarıyla kaydedildi!");
-    setFormData({
-      firstName: "",
-      lastName: "",
-      position: "",
-    }); // Formu sıfırlıyoruz
+
+    // API'ye POST isteği gönderme
+    try {
+      const response = await fetch("http://localhost:5000/addEmployee", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(formData),
+      });
+
+      if (response.ok) {
+        alert("Personel başarıyla kaydedildi!");
+        setFormData({
+          firstName: "",
+          lastName: "",
+          position: "",
+        });
+      } else {
+        const data = await response.json();
+        alert(data.message || "Bir hata oluştu");
+      }
+    } catch (error) {
+      console.error("API isteği sırasında hata oluştu:", error);
+      alert("Bir hata oluştu");
+    }
   };
 
   return (

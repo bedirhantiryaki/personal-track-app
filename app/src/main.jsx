@@ -5,7 +5,7 @@ import { BrowserRouter as Router, Routes, Route } from "react-router-dom"; // Re
 import App from "./App";
 import store from "./store"; // Redux store'u import ediyoruz
 import AddEmployee from "./components/AddEmployee"; // AddEmployee component'ini import ediyoruz
-
+import EmployeeList from "./components/EmployeeList";
 ReactDOM.createRoot(document.getElementById("root")).render(
   <Provider store={store}>
     {/* Redux Provider ile Store'u sağlıyoruz */}
@@ -14,6 +14,7 @@ ReactDOM.createRoot(document.getElementById("root")).render(
         {/* Ana sayfa ve personel ekleme sayfalarını yönlendirme */}
         <Route path="/" element={<App />} />
         <Route path="/addEmployee" element={<AddEmployee />} />
+        <Route path="/api/employees" element={<EmployeeList />} />
       </Routes>
     </Router>
   </Provider>

@@ -30,7 +30,9 @@ function App() {
         </Link>
       </div>
       <div>
-        <button>Personel Listele</button>
+        <Link to="api/employees">
+          <button>Personel Listele</button>
+        </Link>
       </div>
     </div>
   );
