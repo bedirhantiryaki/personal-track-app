@@ -1,33 +1,44 @@
 import React from "react";
 import { useQuery } from "@tanstack/react-query";
-import "./EmployeeList.css"; // Stil dosyanız varsa ekleyebilirsiniz
+import "./EmployeeList.css"; // EmployeeList'e özel stil
 
 const fetchEmployees = async () => {
   const response = await fetch("http://localhost:5000/api/employees");
   if (!response.ok) {
     throw new Error("Personel verileri alınamadı");
   }
-  return response.json();
+  const data = await response.json();
+  return data;
 };
 
 const EmployeeList = () => {
-  // React Query'nin useQuery hook'unu kullanıyoruz
   const {
     data: employees,
     error,
     isLoading,
-  } = useQuery(["employees"], fetchEmployees);
+  } = useQuery({
+    queryKey: ["employees"],
+    queryFn: fetchEmployees,
+  });
 
   if (isLoading) {
-    return <div>Yükleniyor...</div>; // Yükleniyor mesajı
+    return (
+      <div className="container">
+        <p className="loading">Yükleniyor...</p>
+      </div>
+    );
   }
 
   if (error) {
-    return <div>{error.message}</div>; // Hata mesajı
+    return (
+      <div className="container">
+        <p className="error">{error.message}</p>
+      </div>
+    );
   }
 
   return (
-    <div>
+    <div className="container">
       <h1>Personel Listesi</h1>
       <table>
         <thead>

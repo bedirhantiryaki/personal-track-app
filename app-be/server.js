@@ -46,6 +46,7 @@ app.get("/api/employees", async (req, res) => {
     res.status(500).json({ message: "Bir hata oluştu" });
   }
 });
+// Örnek Express.js CORS konfigürasyonu
 
 // Sunucu başlatma
 app.listen(5000, () => {

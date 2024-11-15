@@ -1,16 +1,14 @@
 import React, { useState } from "react";
 import { useMutation } from "@tanstack/react-query";
-import "./AddEmployee.css";
+import "./AddEmployee.css"; // AddEmployee'ye özel stil
 
 const AddEmployee = () => {
-  // Form verileri için state tanımlıyoruz
   const [formData, setFormData] = useState({
     firstName: "",
     lastName: "",
     position: "",
   });
 
-  // Form verileri her değiştiğinde state'i güncelleyen bir fonksiyon
   const handleInputChange = (e) => {
     const { name, value } = e.target;
     setFormData({
@@ -19,7 +17,6 @@ const AddEmployee = () => {
     });
   };
 
-  // API'ye POST isteği gönderen fonksiyon
   const addEmployee = async (newEmployee) => {
     const response = await fetch("http://localhost:5000/addEmployee", {
       method: "POST",
@@ -36,31 +33,17 @@ const AddEmployee = () => {
     return response.json();
   };
 
-  // useMutation ile mutasyon işlemi yapıyoruz
-  const { mutate, isLoading, isError, error, isSuccess } =
-    useMutation(addEmployee);
+  const { mutate, isLoading, isError, error, isSuccess } = useMutation({
+    mutationFn: addEmployee,
+  });
 
-  // Form gönderildiğinde yapılacak işlem
   const handleSubmit = (e) => {
-    e.preventDefault(); // Sayfanın yeniden yüklenmesini engelliyoruz
-    console.log("Personel Kayıt Verileri:", formData);
-
-    // Veriyi React Query'nin mutate fonksiyonu ile gönderiyoruz
+    e.preventDefault();
     mutate(formData);
   };
 
-  // Başarılı kaydetme mesajı
-  if (isSuccess) {
-    alert("Personel başarıyla kaydedildi!");
-    setFormData({
-      firstName: "",
-      lastName: "",
-      position: "",
-    });
-  }
-
   return (
-    <div>
+    <div className="container">
       <h1>Personel Kayıt Formu</h1>
       <form onSubmit={handleSubmit}>
         <div>
@@ -111,7 +94,7 @@ const AddEmployee = () => {
           </button>
         </div>
 
-        {isError && <div style={{ color: "red" }}>{error.message}</div>}
+        {isError && <div className="error">{error.message}</div>}
       </form>
     </div>
   );
